@@ -147,7 +147,7 @@ class GolangIJInlayHintsProvider : InlayHintsProvider {
         private fun buildFuncSigText(funcType: GoFunctionType, sym: GolangIJSettings.State): String {
             val sig = funcType.signature ?: return "(${sym.ellipsisStyle.symbol})"
             return buildString {
-                sig.typeParameters?.let { append(buildTypeParamsText(it, sym)) }
+                if (sym.renderTypeParams) sig.typeParameters?.let { append(buildTypeParamsText(it, sym)) }
                 append("(")
                 append(buildParamDeclsText(sig.parameters.parameterDeclarationList, sym))
                 append(")")
@@ -170,7 +170,7 @@ class GolangIJInlayHintsProvider : InlayHintsProvider {
             ) { // join groups (X, Y, Z any; A, B, C comparable)
                 val typ = it.v1
 
-                it.v2 + if (typ != null) " " + buildTypeText(typ, sym) else ""
+                it.v2 + if (typ != null && sym.renderTypeParamsConstraints) " " + buildTypeText(typ, sym) else ""
             }
 
 

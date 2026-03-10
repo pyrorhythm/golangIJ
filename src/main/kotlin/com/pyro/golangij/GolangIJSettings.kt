@@ -65,6 +65,8 @@ class GolangIJSettings : PersistentStateComponent<GolangIJSettings.State> {
         var separatorStyle: SeparatorStyle = SeparatorStyle.DEFAULT
         var funcLiteralStyle: FuncLiteralStyle = FuncLiteralStyle.DEFAULT
         var insertSpaceOnLeft: Boolean = true
+        var renderTypeParams: Boolean = false
+        var renderTypeParamsConstraints: Boolean = false
         var maxHintLength: Int = 60
     }
 

@@ -14,6 +14,8 @@ class GolangIJInlayHintsConfigurable : Configurable {
     private lateinit var separatorStyleCombo: JComboBox<GolangIJSettings.SeparatorStyle>
     private lateinit var funcLiteralStyleCombo: JComboBox<GolangIJSettings.FuncLiteralStyle>
     private lateinit var insertSpaceOnLeftToggle: JCheckBox
+    private lateinit var renderTypeParamsToggle: JCheckBox
+    private lateinit var renderTypeParamsConstraintsToggle: JCheckBox
     private lateinit var maxHintLengthSpinner: JSpinner
 
     override fun getDisplayName(): String = "Inlay Hints"
@@ -22,9 +24,9 @@ class GolangIJInlayHintsConfigurable : Configurable {
         chanStyleCombo = ComboBox(GolangIJSettings.ChanStyle.entries.toTypedArray()).apply {
             renderer = enumRenderer {
                 when (it) {
-                    GolangIJSettings.ChanStyle.DEFAULT -> "Default (<-)"
-                    GolangIJSettings.ChanStyle.UNICODE -> "Unicode (←)"
-                    GolangIJSettings.ChanStyle.LITERAL -> "Literal (chanOut / chanIn)"
+                    GolangIJSettings.ChanStyle.DEFAULT -> "Default (<-chan)"
+                    GolangIJSettings.ChanStyle.UNICODE -> "Unicode (← chan)"
+                    GolangIJSettings.ChanStyle.LITERAL -> "Literal (chan recv / chan send / chan bi)"
                 }
             }
         }
@@ -100,10 +102,21 @@ class GolangIJInlayHintsConfigurable : Configurable {
         }
 
         insertSpaceOnLeftToggle = JCheckBox()
+        renderTypeParamsToggle = JCheckBox()
+        renderTypeParamsConstraintsToggle = JCheckBox()
+
+        renderTypeParamsConstraintsToggle.isEnabled = renderTypeParamsToggle.isSelected
+        renderTypeParamsToggle.addActionListener {
+            renderTypeParamsConstraintsToggle.isEnabled = renderTypeParamsToggle.isSelected
+            if (!renderTypeParamsToggle.isSelected) renderTypeParamsConstraintsToggle.isSelected = false
+        }
 
         return FormBuilder.createFormBuilder()
-            .addLabeledComponent("Max hint length (0 = unlimited):", maxHintLengthSpinner)
+            .addLabeledComponent("Max hint length (0 = unlimited)", maxHintLengthSpinner)
+            .addSeparator()
             .addLabeledComponent("Insert one space on left for each hint", insertSpaceOnLeftToggle)
+            .addLabeledComponent("Render type parameters", renderTypeParamsToggle)
+            .addLabeledComponent("Also render their constraints", renderTypeParamsConstraintsToggle)
             .addSeparator()
             .addLabeledComponent("Channel arrows:", chanStyleCombo)
             .addLabeledComponent("Channel type brackets:", chanTypeBracketsStyleCombo)
@@ -127,6 +140,8 @@ class GolangIJInlayHintsConfigurable : Configurable {
                 || funcLiteralStyleCombo.selectedItem != settings.funcLiteralStyle
                 || chanTypeBracketsStyleCombo.selectedItem != settings.chanTypeBracketsStyle
                 || insertSpaceOnLeftToggle.isSelected != settings.state.insertSpaceOnLeft
+                || renderTypeParamsToggle.isSelected != settings.state.renderTypeParams
+                || renderTypeParamsConstraintsToggle.isSelected != settings.state.renderTypeParamsConstraints
     }
 
     override fun apply() {
@@ -140,6 +155,8 @@ class GolangIJInlayHintsConfigurable : Configurable {
         state.funcLiteralStyle = funcLiteralStyleCombo.selectedItem as GolangIJSettings.FuncLiteralStyle
         state.maxHintLength = maxHintLengthSpinner.value as Int
         state.insertSpaceOnLeft = insertSpaceOnLeftToggle.isSelected
+        state.renderTypeParams = renderTypeParamsToggle.isSelected
+        state.renderTypeParamsConstraints = renderTypeParamsConstraintsToggle.isSelected
     }
 
     override fun reset() {
@@ -153,6 +170,8 @@ class GolangIJInlayHintsConfigurable : Configurable {
         funcLiteralStyleCombo.selectedItem = settings.funcLiteralStyle
         maxHintLengthSpinner.value = settings.state.maxHintLength
         insertSpaceOnLeftToggle.setSelected(settings.state.insertSpaceOnLeft)
+        renderTypeParamsToggle.setSelected(settings.state.renderTypeParams)
+        renderTypeParamsConstraintsToggle.setSelected(settings.state.renderTypeParamsConstraints)
     }
 
 }
