@@ -20,7 +20,6 @@
 
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.plugins.go</depends>
-    <depends>com.intellij.modules.goland</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <codeInsight.declarativeInlayProvider group="TYPES_GROUP"
